@@ -38,13 +38,13 @@
 
 ## What is this
 
-Food Formulation for Claude Code does the job you pay Genesis R&D for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Genesis R&D dashboard cannot.
+Food Formulation for Claude Code covers the formulation record work inside Genesis R&D, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and combines the records into the questions below. No claim is made that Genesis cannot report the same data.
 
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Genesis R&D per year, all in, with a source. -->
+Genesis does not publish a licence price on its [product page](https://www.trustwell.com/products/genesis/food-formulation-and-labeling/) (checked 5 November 2026). Historical user reports describe five-figure renewals, but they are not current quotes or verified NZ/AU invoices. Compare your own renewal with the work your team uses before switching.
 
 Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=genesis-rd).
 
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
+This is the formulation desk for a small food manufacturer: ingredient quantities, supplier specifications, recipe costs, working nutrition calculations, review dates and retained source reports. It keeps missing evidence visible and records who reviewed the inputs. It does not replace a licensed nutrient library, approve labels or certify regulatory compliance.
 
 ## Why no front end
 
@@ -54,7 +54,7 @@ Want the same thing with a web front end, or built on a different stack? That is
 
 ## Quick start
 
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+No separate database install (an embedded Postgres runs inside Node):
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/food-formulation-for-claude-code.git
@@ -63,7 +63,7 @@ npm install
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Then open the folder in Claude Code and type a slash command. Start with `/attention`. The fictional demonstration has an overdue honey specification shared by three recipes, missing cocoa values, a stale review and a trial without quantities.
 
 ### Use it with your own Postgres or Supabase
 
@@ -71,7 +71,35 @@ Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same 
 
 ## The commands
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+| Command | What it does |
+|---|---|
+| /ingredients | Read ingredient prices, sources and review dates. |
+| /recipes | Read the recipe register and owners. |
+| /recipe | Read one recipe, its ingredients, notes and retained reports. Use a code or unique name. |
+| /costs | Compare batch and serving ingredient costs. Unknown inputs stay unknown. |
+| /nutrition | Read a recipe’s working nutrition values. These are not approved labels. |
+| /allergens | Read a recipe’s supplier allergen declarations. Unknown is not allergen-free. |
+| /spec-renewals | Find missing, overdue and near-due supplier specifications. |
+| /where-used | Find every recipe using one ingredient. |
+| /changes | Find recipes whose technical review is stale. |
+| /attention | Read all evidence and review gaps, grouped by recipe. |
+| /compliance | Run the limited record checks with their sources. Read docs/compliance.md and explain the limits. |
+| /insights | Run the ten management questions. One key selects one question. |
+| /scale | Scale a recipe’s quantities to a target finished weight without changing the database. |
+| /compare | Compare the calculated nutrients of two recipe versions. |
+| /add-ingredient | Create an ingredient from supplied evidence. Do not invent nutrients or allergen declarations. |
+| /set-ingredient | Change specified ingredient fields. Read where-used first because this changes recipe calculations. |
+| /add-recipe | Create a recipe shell with a unique code, owner and weights where known. |
+| /set-recipe | Change recipe details or archive a recipe. Preserve unknowns. |
+| /set-line | Set an ingredient quantity in a recipe. Read the recipe first. |
+| /log | Add a dated note to a recipe, or use --ingredient for an ingredient. |
+| /review | Record a technical review with a named reviewer and note after evidence checks pass. This is not label approval. |
+| /import | Read docs/replace-genesis-rd.md. Retain native text reports or import explicitly mapped CSV. Dry run first, reconcile counts, then apply. |
+| /export | Write every record type as CSV to a new private directory. |
+| /weekly-review | Write the Monday review to drafts from attention, costs and spec-renewals. Present the most urgent supplier and review gaps. |
+| /draft-spec-request | Read an ingredient and its usage, then draft a supplier evidence request. Never send. |
+| /customise | Change your fields and rules, with a migration and tests. |
+| /new-view | Add a read-only report. |
 
 | Command | What it does |
 |---|---|
@@ -79,7 +107,7 @@ Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same 
 
 ## Instead of Genesis R&D
 
-<!-- TODO(author): how to bring data across from Genesis R&D; link docs/replace-genesis-rd.md -->
+The native text import preserves Genesis Recipe Analysis and Report Sections exports unchanged. It does not reconstruct ingredient quantities or extract a licensed nutrient database. Editable records use explicitly mapped CSV after checking units and source values. See [the switching guide](docs/replace-genesis-rd.md) for the commands, mapping and reconciliation checks.
 
 ## Architecture
 
@@ -105,7 +133,7 @@ Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a 
 
 ## Want it installed and run for you?
 
-Enterprise DNA installs Food Formulation for Claude Code for your business, migrates your Genesis R&D data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+Enterprise DNA installs Food Formulation for Claude Code for your business, migrates your Genesis R&D data, connects it to the rest of your tools, and runs it for you as part of **Omni by Enterprise DNA**, our managed Command Centre. One setup fee, then a monthly retainer.
 
 - Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=genesis-rd)
 - Read more: [enterprisedna.co/omni/instead-of/genesis-rd](https://enterprisedna.co/omni/instead-of/genesis-rd?utm_source=github&utm_medium=readme&utm_campaign=genesis-rd)
@@ -113,3 +141,37 @@ Enterprise DNA installs Food Formulation for Claude Code for your business, migr
 ## License
 
 MIT. Copyright (c) 2026 Enterprise DNA.
+
+## Working model and limits
+
+All seven nutrient values are stored per 100 g of ingredient. Quantities and finished yield drive the working calculations. A missing value makes that nutrient unknown. Mixed currencies make cost unknown. Ingredient edits make any earlier recipe review stale. Reviews retain the exact inputs used. No automatic labels, market claims, cooking retention factors, cross-contact decisions, subrecipe expansion or nutrient library are provided.
+
+`npm run view` writes three read-only reports. `npm run docs` writes recipe cards, draft nutrition worksheets and technical review packs. Set `brand.json` once for business name, colours and logo. `npm test` checks commands, calculations, stale reviews, import rollback, CSV edge cases and generated documents. `npm run demo` installs fictional records and is repeatable. Do not seed a production database with demonstration data.
+
+## Ten questions to ask across your records
+
+These are implemented queries, not claims about what another vendor cannot do.
+
+1. Which recipes have the most missing evidence? `insights blockers`
+2. Which overdue supplier sheets affect several recipes? `insights shared-specs`
+3. Which servings cost the most to make? `insights cost-per-serve`
+4. Which ingredients contribute most of each recipe’s sugar? `insights sugar-drivers`
+5. Where is each recipe’s sodium coming from? `insights sodium-drivers`
+6. Which recipes lose the most weight during processing? `insights yield-loss`
+7. Which recipes depend on each declared allergen? `insights allergen-impact`
+8. Which recipes changed after their last technical review? `insights review-changes`
+9. Which recipes have a retained Genesis export? `insights import-coverage`
+10. Which trials have no recent progress note? `insights quiet-trials`
+
+## Your first hour: ten things to ask for
+
+1. Show this week’s evidence gaps.
+2. Show the almond granola’s source records.
+3. Find every recipe affected by the overdue honey specification.
+4. Compare the two breakfast granola trials.
+5. Scale the almond granola to a finished batch of 18 kilograms.
+6. Show the sodium contributed by each ingredient in the snack bar.
+7. Draft the supplier specification request.
+8. Prepare the weekly review for the technical manager.
+9. Add a supplier contact field with `/customise`.
+10. Add a view of recipes grouped by owner with `/new-view`.

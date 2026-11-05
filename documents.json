@@ -1,11 +1,71 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "recipe-card",
+    "title": "Internal recipe card",
+    "for_each": "select id,code from recipes",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Recipe",
+        "layout": "record",
+        "sql": "select code,name,owner,stage,yield_g,serving_g,pack_g from recipes where id=$1"
+      },
+      {
+        "title": "Weighing sheet",
+        "sql": "select i.code,i.name,l.grams,i.allergens from recipe_lines l join ingredients i on i.id=l.ingredient_id where l.recipe_id=$1 order by l.grams desc"
+      },
+      {
+        "title": "Cost basis",
+        "note": "Ingredient costs only; currency must match.",
+        "sql": "select currency,batch_cost_amount,serving_cost_amount,unknown_costs from recipe_costs where id=$1"
+      }
+    ]
+  },
+  {
+    "name": "nutrition-worksheet",
+    "title": "Draft nutrition calculation worksheet",
+    "for_each": "select id,code from recipes",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Serving and pack",
+        "layout": "record",
+        "sql": "select code,name,yield_g,serving_g,pack_g,pack_g/serving_g as servings_per_pack from recipes where id=$1"
+      },
+      {
+        "title": "Calculated values",
+        "note": "Working calculations, not a print-ready label. Assumes nutrient retention through processing. Unknown means evidence is missing. Applies to weight-based recipes only. A qualified reviewer checks source suitability, processing losses, label rules and rounding.",
+        "sql": "select nutrient,unit,per_100g,per_serving,unknown_values from recipe_nutrients where id=$1 order by nutrient"
+      },
+      {
+        "title": "Outstanding checks",
+        "sql": "select rule,problem,source from compliance_findings where recipe_id=$1 order by rule"
+      }
+    ]
+  },
+  {
+    "name": "technical-review",
+    "title": "Technical review evidence pack",
+    "for_each": "select id,code from recipes",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Review state",
+        "sql": "select code,owner,review_state,review_due from review_queue where id=$1"
+      },
+      {
+        "title": "Supplier declarations",
+        "note": "Recorded supplier declarations only. This is not a cross-contact assessment or an approved allergen statement.",
+        "sql": "select i.code,i.name,i.source,i.spec_review_due,i.allergens from recipe_lines l join ingredients i on i.id=l.ingredient_id where l.recipe_id=$1 order by i.code"
+      },
+      {
+        "title": "Review history",
+        "sql": "select reviewer,note,created_at from reviews where recipe_id=$1 order by created_at desc"
+      },
+      {
+        "title": "Retained Genesis reports",
+        "sql": "select filename,sha256,imported_by,created_at from source_exports where recipe_id=$1 order by created_at"
+      }
     ]
   }
 ]

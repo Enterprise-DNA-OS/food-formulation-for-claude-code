@@ -1,24 +1,9 @@
-# Why there is no front end
+# Why no front end
 
-Genesis R&D is a database with a subscription. The tables underneath it are ordinary: a few entities, a few relationships, a handful of workflows you repeat every week. What you pay for is the layer on top that lets people who do not write SQL get at those tables. Screens, filters, dashboards, forms.
+The formulation desk is a database, a CLI and instructions for Claude Code, Codex, OpenCode or Cursor. Ask for the recipes affected by a supplier change, compare two trials, or prepare the weekly review. Read-only HTML gives the technical manager something to inspect and print.
 
-That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code, describe what you want, and it writes the query, runs it, and explains the answer. Ask a question the dashboard never had a chart for and you still get an answer.
+A screen adds rapid bench entry, mobile photos, offline work, drag-and-drop ingredient ordering and collaborative label artwork. This free base does not provide those. Enterprise DNA can build those into the operator’s version. The base is useful for desk review and controlled updates without them.
 
-## What you gain
+There is no public server, authentication interface, automatic feed or sending service. The local database has one operating-system user. A shared Postgres database needs an operator-managed access model, backups and restricted database roles. Row-level security denies access to non-owner roles until policies are deliberately configured; the database owner used by the CLI remains privileged.
 
-- **Better answers.** A dashboard shows what the vendor decided to chart. Here you ask your own question, in your own words, and get it answered against your own data.
-- **No seats.** Everyone who needs to look can look. The bill does not grow with headcount.
-- **Your data in your Postgres.** Plain tables. Back them up, query them from anything, leave any time. There is no export step because there is nothing to leave.
-- **A process that matches you.** When your way of working changes, you add a command. You do not wait for a feature request to clear.
-
-## What you give up
-
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
-
-## Who this fits
-
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Genesis R&D. If you need the answers more than the screens, this is cheaper, faster and yours.
-
-Installed and run for you: https://enterprisedna.co/omni/instead-of/genesis-rd
+Generated documents are internal worksheets and review packs, not production labels. Label approval stays with the food business. Source reports and exports can contain confidential recipes: keep them inside the private workspace.

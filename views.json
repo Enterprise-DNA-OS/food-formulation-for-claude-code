@@ -1,13 +1,37 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Food Formulation for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Formulation desk: this week",
+    "subtitle": "Internal working records. Technical review remains with the food business.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Review queue",
+        "sql": "select code,name,owner,review_state,review_due from review_queue order by code"
+      },
+      {
+        "title": "Evidence to clear",
+        "sql": "select code,rule,problem from compliance_findings order by code,rule"
+      }
+    ]
+  },
+  {
+    "name": "costs",
+    "title": "Recipe costs and yields",
+    "sections": [
+      {
+        "title": "Recipe costs",
+        "note": "Ingredient costs only. Unknown costs are never treated as zero. No currency conversion.",
+        "sql": "select code,currency,input_g,yield_g,batch_cost_amount,serving_cost_amount,unknown_costs from recipe_costs order by code"
+      }
+    ]
+  },
+  {
+    "name": "suppliers",
+    "title": "Supplier evidence",
+    "sections": [
+      {
+        "title": "Specification renewals",
+        "sql": "select code,name,supplier,spec_review_due,recipes_using,recipe_codes from ingredient_usage order by spec_review_due nulls first,code"
       }
     ]
   }

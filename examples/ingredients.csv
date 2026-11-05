@@ -1,0 +1,2 @@
+code,name,supplier,cost_per_kg,currency,energy_kj,protein_g,fat_g,saturated_fat_g,carbohydrate_g,sugars_g,sodium_mg,allergens,source,spec_review_due
+TEST-OAT,Example oats,Fictional supplier,3.2,NZD,1600,13,7,1.2,60,1,5,oats|gluten,Fictional example only,2027-11-05

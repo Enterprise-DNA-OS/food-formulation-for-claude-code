@@ -1,0 +1,2 @@
+code,name,owner,stage,yield_g,serving_g,pack_g,currency,review_due
+TEST-PORRIDGE,Example porridge,Example reviewer,trial,100,50,200,NZD,2027-11-05
