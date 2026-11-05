@@ -5,6 +5,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { getDb, REPO_ROOT } from './lib/db.mjs';
 import { parseCsv } from './lib/csv.mjs';
+import { table } from './lib/format.mjs';
 
 const nutrients = ['energy_kj','protein_g','fat_g','saturated_fat_g','carbohydrate_g','sugars_g','sodium_mg'];
 const ingredientFields = ['name','supplier','cost_per_kg','currency',...nutrients,'allergens','source','spec_review_due'];
@@ -249,10 +250,7 @@ export function format(value) {
  if(!Array.isArray(value))return JSON.stringify(value,null,2);
  if(!value.length)return 'No records.';
  const keys=Object.keys(value[0]);const show=v=>v===null||v===undefined?'unknown':typeof v==='object'?JSON.stringify(v):String(v);
- const rows=value.map(row=>keys.map(k=>show(row[k])));
- const widths=keys.map((k,i)=>Math.min(90,Math.max(k.length,...rows.map(r=>r[i].length))));
- const line=r=>r.map((v,i)=>v.padEnd(widths[i])).join(' | ');
- return [line(keys),widths.map(w=>'-'.repeat(w)).join('-+-'),...rows.map(line)].join('\n');
+ return table(value,keys.map(key=>({key,label:key.replace(/_amount$/,'').replaceAll('_',' '),width:90,format:show})));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href) {
  let db;try {const args=process.argv.slice(2);parse(args);db=await getDb();const out=await run(db,args);console.log(args.includes('--json')?JSON.stringify(out,null,2):format(out));}
